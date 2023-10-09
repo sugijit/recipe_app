@@ -1,5 +1,5 @@
 import Search from "./model/Search";
-import { elements } from "./view/base";
+import { elements, renderLoader, clearLoader } from "./view/base";
 import * as searchView from "./view/searchView";
 
 const state = {};
@@ -12,9 +12,11 @@ const controlSearch = async () => {
     // 3. Hailt hiihed zoriulj interface(Delgets)-ee beldene
     searchView.clearSearch();
     searchView.clearSearchQuery();
+    renderLoader(elements.searchResultDiv);
     // 4. Hailtiig guitsetgene
     await state.search.doSearch();
     // 5. Hailtiin ur dung delgetsend uzuulne
+    clearLoader();
     if (state.search.result === undefined) alert("hailtaar ilertsgui");
     searchView.renderRecipes(state.search.result);
   }
