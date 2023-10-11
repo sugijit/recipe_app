@@ -10,8 +10,8 @@ const controlSearch = async () => {
     // 2. Shineer hailtiin object-iig uusgej ugnu
     state.search = new Search(query);
     // 3. Hailt hiihed zoriulj interface(Delgets)-ee beldene
-    searchView.clearSearch();
     searchView.clearSearchQuery();
+    searchView.clearSearch();
     renderLoader(elements.searchResultDiv);
     // 4. Hailtiig guitsetgene
     await state.search.doSearch();
@@ -24,4 +24,13 @@ const controlSearch = async () => {
 elements.searchForm.addEventListener("submit", (e) => {
   e.preventDefault();
   controlSearch();
+});
+
+elements.pageButtons.addEventListener("click", (e) => {
+  const btn = e.target.closest(".btn-inline");
+  if (btn) {
+    const goto = parseInt(btn.dataset.goto, 10);
+    searchView.clearSearchQuery();
+    searchView.renderRecipes(state.search.result, goto);
+  }
 });
