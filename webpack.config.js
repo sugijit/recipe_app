@@ -9,6 +9,7 @@ module.exports = {
     path: path.resolve(__dirname, "docs"),
   },
   target: "web",
+  devtool: "inline-source-map",
   plugins: [
     new HtmlWebpackPlugin({
       filename: "index.html",
