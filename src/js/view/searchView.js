@@ -4,7 +4,7 @@ import { elements } from "./base";
 const renderRecipe = (recipe) => {
   const markup = `
        <li>
-            <a class="results__link" href="${recipe.reipe_id}">
+            <a class="results__link" href="#${recipe.recipe_id}">
                  <figure class="results__fig">
                       <img src="${recipe.image_url}" alt="Test">
                  </figure>
@@ -29,7 +29,7 @@ export const clearSearch = () => {
 };
 
 export const getInput = () => elements.searchInput.value;
-export const renderRecipes = (recipes, currentPage = 1, resPerPage = 5) => {
+export const renderRecipes = (recipes, currentPage = 1, resPerPage = 10) => {
   const start = (currentPage - 1) * resPerPage;
   const end = currentPage * resPerPage;
   recipes.slice(start, end).forEach(renderRecipe);

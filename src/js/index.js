@@ -2,8 +2,19 @@ import Search from "./model/Search";
 import { elements, renderLoader, clearLoader } from "./view/base";
 import * as searchView from "./view/searchView";
 import Recipe from "./model/Recipe";
+import List from "./model/List";
+import {
+  renderRecipe,
+  clearRecipe,
+  highlightSelectedRecipe,
+} from "./view/recipeView";
+import * as listView from "./view/listView";
 
 const state = {};
+
+/**
+ * Hailtiin controller
+ */
 const controlSearch = async () => {
   // 1. Webees hailtiin tulhuur ugiig gargaj avna
   const query = searchView.getInput();
@@ -36,5 +47,54 @@ elements.pageButtons.addEventListener("click", (e) => {
   }
 });
 
-const r = new Recipe(47746);
-r.getRecipe();
+/**
+ * Joriin controller
+ */
+
+const controlRecipe = async () => {
+  // 1. url-ees id-g salgaj avna
+  const id = window.location.hash.replace("#", "");
+  // 2. Joriin model-iig uusgej ugno
+  if (id) {
+    state.recipe = new Recipe(id);
+    // 3. UI buyu delgetsiig beldene
+    clearRecipe();
+    renderLoader(elements.recipeDiv);
+    highlightSelectedRecipe(id);
+    // 4. Joroo tataj avchirna
+    await state.recipe.getRecipe();
+    // 5. Joriig guitsetgeh hugatsaa, ortsiig tootsooloh
+    clearLoader();
+    state.recipe.calcTime();
+    state.recipe.calcHuniiToo();
+    // 6. Joroo uzuulne
+    renderRecipe(state.recipe);
+  }
+};
+// window.addEventListener("hashchange", controlRecipe);
+// window.addEventListener("load", controlRecipe);
+
+["hashchange", "load"].forEach((e) =>
+  window.addEventListener(e, controlRecipe)
+);
+
+/**
+ * Nairlagiin controller
+ */
+
+const controlList = () => {
+  //Nairlaganii modeliig uusgene
+  state.list = new List();
+
+  //ug model ruu odoo haragdaj baigaa jornii buh nairlagiig hadgalna
+  state.recipe.ingredients.forEach((n) => {
+    state.list.addItem(n);
+    listView.renderItem(n);
+  });
+};
+
+elements.recipeDiv.addEventListener("click", (e) => {
+  if (e.target.matches(".recipe__btn, .recipe__btn *")) {
+    controlList();
+  }
+});
