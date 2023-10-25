@@ -85,11 +85,12 @@ const controlRecipe = async () => {
 const controlList = () => {
   //Nairlaganii modeliig uusgene
   state.list = new List();
+  listView.clearItems();
 
   //ug model ruu odoo haragdaj baigaa jornii buh nairlagiig hadgalna
   state.recipe.ingredients.forEach((n) => {
-    state.list.addItem(n);
-    listView.renderItem(n);
+    const item = state.list.addItem(n);
+    listView.renderItem(item);
   });
 };
 
@@ -97,4 +98,14 @@ elements.recipeDiv.addEventListener("click", (e) => {
   if (e.target.matches(".recipe__btn, .recipe__btn *")) {
     controlList();
   }
+});
+
+elements.shoppingList.addEventListener("click", (e) => {
+  const id = e.target.closest(".shopping__item").dataset.itemid;
+
+  //oldson id-tei ortsiig modeloos ustgana
+  state.list.deleteItem(id);
+
+  //Delgetsees iim id-tei ortsiig ustgana
+  listView.deleteItem(id);
 });
