@@ -3,6 +3,8 @@ import { elements, renderLoader, clearLoader } from "./view/base";
 import * as searchView from "./view/searchView";
 import Recipe from "./model/Recipe";
 import List from "./model/List";
+import Like from "./model/Like";
+import * as likesView from "./view/likesView";
 import {
   renderRecipe,
   clearRecipe,
@@ -54,6 +56,7 @@ elements.pageButtons.addEventListener("click", (e) => {
 const controlRecipe = async () => {
   // 1. url-ees id-g salgaj avna
   const id = window.location.hash.replace("#", "");
+
   // 2. Joriin model-iig uusgej ugno
   if (id) {
     state.recipe = new Recipe(id);
@@ -68,7 +71,7 @@ const controlRecipe = async () => {
     state.recipe.calcTime();
     state.recipe.calcHuniiToo();
     // 6. Joroo uzuulne
-    renderRecipe(state.recipe);
+    renderRecipe(state.recipe, state.likes.isLiked(id));
   }
 };
 // window.addEventListener("hashchange", controlRecipe);
@@ -77,6 +80,14 @@ const controlRecipe = async () => {
 ["hashchange", "load"].forEach((e) =>
   window.addEventListener(e, controlRecipe)
 );
+
+window.addEventListener("load", (e) => {
+  if (!state.likes) state.likes = new Like();
+
+  likesView.toggleLikeMenu(state.likes.getNumberOfLikes());
+
+  state.likes.likes.forEach((like) => likesView.renderLike(like));
+});
 
 /**
  * Nairlagiin controller
@@ -94,9 +105,37 @@ const controlList = () => {
   });
 };
 
+const controlLike = () => {
+  // 1. like-n model uusgene
+  if (!state.likes) state.likes = new Like();
+  // 2. Odoo haragdaj bgaa joriin ID-g olj avah
+  const currentRecipeId = state.recipe.id;
+  // 3. Ene joriig like-lsan esehiig shalgah
+  if (state.likes.isLiked(currentRecipeId)) {
+    // 4. Like-lsan bol like-g boliulah
+    state.likes.deleteLike(currentRecipeId);
+    likesView.deleteLike(currentRecipeId);
+    likesView.toggleLikeBtn(false);
+  } else {
+    // 5. Like-laagui bol likelana
+
+    const newLike = state.likes.addLike(
+      currentRecipeId,
+      state.recipe.title,
+      state.recipe.publisher,
+      state.recipe.image_url
+    );
+    likesView.renderLike(newLike);
+    likesView.toggleLikeBtn(true);
+  }
+  likesView.toggleLikeMenu(state.likes.getNumberOfLikes());
+};
+
 elements.recipeDiv.addEventListener("click", (e) => {
   if (e.target.matches(".recipe__btn, .recipe__btn *")) {
     controlList();
+  } else if (e.target.matches(".recipe__love, .recipe__love *")) {
+    controlLike();
   }
 });
 

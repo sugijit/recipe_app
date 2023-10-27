@@ -41,7 +41,6 @@ export default class Recipe {
     this.social_rank = result.data.recipe.social_rank;
     this.publisher_url = result.data.recipe.publisher_url;
     this.title = result.data.recipe.title;
-    console.log(this.ingredients);
   }
 
   calcTime() {
